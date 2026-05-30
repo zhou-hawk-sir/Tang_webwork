@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="李龙馥 - Lee Felix · Stray Kids 个人偶像宣传网站">
+  <meta name="theme-color" content="#DC2626">
+  <title>李龙馥 | Felix · Stray Kids</title>
+  <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700;900&family=Noto+Serif+SC:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="Styles/style.css">
+  <link rel="stylesheet" href="Styles/animations.css">
+  <link rel="stylesheet" href="Styles/extra-home.css">
+  <style>
+    /* ===== SPLASH SCREEN v2.0 ===== */
+    .splash-screen {
+      position: fixed; inset: 0; z-index: 99999;
+      display: flex; align-items: center; justify-content: center;
+      background: linear-gradient(135deg, #0a0508 0%, #111 30%, #080812 60%, #0a0510 100%);
+      cursor: pointer; overflow: hidden;
+    }
+    .splash-screen::before {
+      content: ''; position: absolute; inset: 0;
+      background:
+        radial-gradient(circle at 30% 40%, rgba(220, 38, 38, 0.06) 0%, transparent 50%),
+        radial-gradient(circle at 70% 60%, rgba(37, 99, 235, 0.06) 0%, transparent 50%);
+    }
+
+    /* Splash text */
+    .splash-text { position: relative; z-index: 2; text-align: center; }
+    .splash-name {
+      font-family: 'Noto Serif SC', serif;
+      font-size: clamp(4rem, 14vw, 12rem);
+      font-weight: 900; letter-spacing: 0.12em; line-height: 1;
+      background: linear-gradient(135deg, #ef4444 0%, #f97316 25%, #ffffff 50%, #60a5fa 75%, #1A5FB4 100%);
+      background-size: 200% 200%;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: gradientShift 4s ease infinite;
+      filter: drop-shadow(0 0 40px rgba(220, 38, 38, 0.15)) drop-shadow(0 0 80px rgba(26, 95, 180, 0.1));
+      user-select: none;
+    }
+    .splash-sub {
+      font-size: clamp(0.8rem, 1.8vw, 1rem);
+      color: rgba(255,255,255,0.3); letter-spacing: 0.5em;
+      margin-top: 20px; font-weight: 300;
+    }
+    .splash-hint {
+      position: absolute; bottom: 48px; left: 50%; transform: translateX(-50%);
+      color: rgba(255,255,255,0.25); font-size: 0.78rem;
+      letter-spacing: 3px; z-index: 2;
+      animation: pulse 2.5s ease-in-out infinite;
+    }
+
+    /* Center crack line */
+    .crack-line {
+      position: absolute; top: 0; left: 50%; width: 1px; height: 100%;
+      background: rgba(255,255,255,0.2); z-index: 4; opacity: 0;
+      transition: opacity 0.3s; transform: translateX(-50%);
+    }
+    .splash-screen:hover .crack-line { opacity: 1; }
+
+    /* Curtain split panels */
+    .splash-left, .splash-right {
+      position: absolute; top: 0; width: 50%; height: 100%; z-index: 3;
+      transition: transform 1.2s cubic-bezier(0.76, 0, 0.24, 1);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .splash-left {
+      left: 0; transform-origin: left center;
+      background: linear-gradient(135deg, #1a0808 0%, #2a0f0f 100%);
+    }
+    .splash-right {
+      right: 0; transform-origin: right center;
+      background: linear-gradient(135deg, #08081a 0%, #0f0f2a 100%);
+    }
+    .curtain-char {
+      font-family: 'Noto Serif SC', serif;
+      font-size: clamp(5rem, 16vw, 14rem);
+      font-weight: 900; opacity: 0.15; user-select: none;
+    }
+    .splash-left .curtain-char {
+      color: #ef4444; text-shadow: 0 0 60px rgba(220, 38, 38, 0.2);
+      margin-right: -8vw;
+    }
+    .splash-right .curtain-char {
+      color: #1A5FB4; text-shadow: 0 0 60px rgba(26, 95, 180, 0.2);
+      margin-left: -8vw;
+    }
+
+    /* Split animation states */
+    .splash-screen.splitting .splash-left { transform: translateX(-110%); }
+    .splash-screen.splitting .splash-right { transform: translateX(110%); }
+    .splash-screen.splitting .splash-hint { opacity: 0; }
+    .splash-screen.done { display: none; }
+
+    /* Particles */
+    .split-particles { position: absolute; inset: 0; z-index: 5; pointer-events: none; }
+    .split-particle {
+      position: absolute; left: 50%;
+      width: 3px; height: 3px; border-radius: 50%; opacity: 0;
+    }
+    .splash-screen.splitting .split-particle {
+      animation: splitP 1s ease-out forwards;
+    }
+    @keyframes splitP {
+      0% { opacity: 1; transform: translate(0,0) scale(1); }
+      100% { opacity: 0; transform: translate(var(--px), var(--py)) scale(0); }
+    }
+
+    /* Loading dots */
+    .splash-loading {
+      position: absolute; bottom: 80px; left: 50%; transform: translateX(-50%);
+      display: flex; gap: 6px; z-index: 2;
+    }
+    .splash-loading span {
+      width: 4px; height: 4px; border-radius: 50%;
+      background: rgba(255,255,255,0.2);
+      animation: loadDot 1.2s ease-in-out infinite;
+    }
+    .splash-loading span:nth-child(2) { animation-delay: 0.15s; }
+    .splash-loading span:nth-child(3) { animation-delay: 0.3s; }
+    @keyframes loadDot {
+      0%, 80%, 100% { opacity: 0.2; transform: scale(1); }
+      40% { opacity: 0.8; transform: scale(1.3); }
+    }
+
+    /* Image placeholders */
+    .img-placeholder {
+      width: 100%; height: 100%; object-fit: cover; background: var(--gray-100);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--gray-400); font-size: 0.75rem;
+    }
+  </style>
+</head>
+<body>
+  <!-- SPLASH SCREEN -->
+  <div class="splash-screen" id="splash" onclick="splitSplash()">
+    <div class="splash-left"><span class="curtain-char">龙</span></div>
+    <div class="splash-right"><span class="curtain-char">馥</span></div>
+    <div class="crack-line"></div>
+    <div class="split-particles" id="splitParticles"></div>
+    <div class="splash-text">
+      <div class="splash-name">李龙馥</div>
+      <div class="splash-sub">LEE FELIX · STRAY KIDS</div>
+    </div>
+    <div class="splash-hint">点击进入</div>
+  </div>
+
+  <!-- APP -->
+  <div id="app" style="opacity:0;transition:opacity 0.8s ease">
+    <!-- Header -->
+    <header class="site-header" :class="{'scrolled':isScrolled}">
+      <div class="container flex flex-between flex-center">
+        <router-link to="/" class="nav-logo">
+          <div class="logo-text" style="display:flex;flex-direction:column;gap:2px;">
+            <span class="logo-title">李龙馥</span>
+            <span class="logo-subtitle">Felix · Stray Kids</span>
+          </div>
+        </router-link>
+        <nav class="nav-menu" :class="{'nav-open':mobileMenuOpen}">
+          <div class="nav-mobile-header flex flex-between flex-center">
+            <span class="logo-title" style="font-size:1rem">李龙馥</span>
+            <button class="nav-close" @click="mobileMenuOpen=false">&times;</button>
+          </div>
+          <template v-for="item in navItems" :key="item.path">
+            <div class="nav-item" :class="{'has-dropdown':item.children}"
+              @mouseenter="item.children&&(item._open=true)"
+              @mouseleave="item.children&&(item._open=false)">
+              <router-link :to="item.path" class="nav-link"
+                :class="{'active':isActiveRoute(item.path)}"
+                @click="closeMobile">{{item.name}}</router-link>
+              <div class="dropdown-menu" v-if="item.children&&item._open">
+                <router-link v-for="child in item.children" :key="child.path"
+                  :to="child.path" class="dropdown-item"
+                  @click="closeMobile">{{child.name}}</router-link>
+              </div>
+            </div>
+          </template>
+        </nav>
+        <button class="nav-toggle" @click="mobileMenuOpen=!mobileMenuOpen">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </header>
+    <div class="mobile-overlay" v-if="mobileMenuOpen" @click="closeMobile"></div>
+
+    <!-- Main -->
+    <main>
+      <router-view v-slot="{Component}">
+        <transition name="page" mode="out-in"><component :is="Component"/></transition>
+      </router-view>
+    </main>
+
+    <!-- Back to Top -->
+    <button class="back-to-top" :class="{'visible':isScrolled}" @click="scrollToTop">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M8 12V4M8 4L4 8M8 4L12 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+      <div class="container">
+        <div class="footer-grid">
+          <div>
+            <h4 class="footer-title">李龙馥</h4>
+            <p class="footer-desc">Lee Felix · Stray Kids<br>记录舞台上的光芒与生活中的温暖</p>
+            <div class="footer-social">
+              <a href="https://www.instagram.com/yongbokk" target="_blank" class="social-link" title="Instagram">IG</a>
+              <a href="https://twitter.com/Stray_Kids" target="_blank" class="social-link" title="X (Twitter)">X</a>
+              <a href="https://www.youtube.com/@StrayKids" target="_blank" class="social-link" title="YouTube">YT</a>
+              <a href="https://weverse.io/straykids" target="_blank" class="social-link" title="Weverse">WV</a>
+            </div>
+          </div>
+          <div>
+            <h4 class="footer-title">导航</h4>
+            <ul class="footer-links">
+              <li><router-link to="/profile">偶像档案</router-link></li>
+              <li><router-link to="/music">音乐作品</router-link></li>
+              <li><router-link to="/variety">影视综艺</router-link></li>
+              <li><router-link to="/gallery">图影世界</router-link></li>
+              <li><router-link to="/fanzone">粉丝乐园</router-link></li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="footer-title">热门</h4>
+            <ul class="footer-links">
+              <li><router-link to="/profile">个人简介</router-link></li>
+              <li><router-link to="/music/solo">个人单曲</router-link></li>
+              <li><router-link to="/music/fancams">舞台直拍</router-link></li>
+              <li><router-link to="/gallery/wallpapers">壁纸下载</router-link></li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="footer-title">关于</h4>
+            <ul class="footer-links">
+              <li><router-link to="/about">网站介绍</router-link></li>
+              <li><router-link to="/about/contact">联系我们</router-link></li>
+              <li><router-link to="/about/links">友情链接</router-link></li>
+            </ul>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>&copy; 2026 李龙馥粉丝宣传网站 &middot; 本站为粉丝个人宣传作品，如有侵权请联系作者删除</p>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- CDN -->
+  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+  <script src="https://unpkg.com/vue-router@4/dist/vue-router.global.prod.js"></script>
+  <script src="Source/js/data.js"></script>
+  <script src="Source/js/components-home.js"></script>
+  <script src="Source/js/components-profile.js"></script>
+  <script src="Source/js/components-music.js"></script>
+  <script src="Source/js/components-variety.js"></script>
+  <script src="Source/js/components-gallery.js"></script>
+  <script src="Source/js/components-fanzone.js"></script>
+  <script src="Source/js/components-about.js"></script>
+  <script src="Source/js/app.js"></script>
+
+  <script>
+    function splitSplash() {
+      var splash = document.getElementById('splash');
+      if (splash.classList.contains('splitting')) return;
+      var container = document.getElementById('splitParticles');
+      for (var i = 0; i < 30; i++) {
+        var p = document.createElement('div');
+        p.className = 'split-particle';
+        p.style.top = (Math.random() * 100) + '%';
+        p.style.setProperty('--px', (Math.random() > 0.5 ? 1 : -1) * (100 + Math.random() * 250) + 'px');
+        p.style.setProperty('--py', (Math.random() - 0.5) * 200 + 'px');
+        p.style.animationDelay = (Math.random() * 0.3) + 's';
+        var colors = ['#ef4444', '#f97316', '#1A5FB4', '#4A90D9', '#eab308'];
+        p.style.background = colors[Math.floor(Math.random() * colors.length)];
+        container.appendChild(p);
+      }
+      splash.classList.add('splitting');
+      setTimeout(function() {
+        splash.classList.add('done');
+        document.getElementById('app').style.opacity = '1';
+      }, 1100);
+    }
+    setTimeout(function() { splitSplash(); }, 3800);
+  </script>
+</body>
+</html>
